@@ -31,7 +31,7 @@ void handle_sigint(int sig)
     // Wait for child to terminate
     wait(NULL);
     FILE *ptr;
-    ptr = fopen("log.txt", "a");
+    ptr = fopen("/home/mahmoud/log.txt", "a");
     // Append new sentence to log.txt
     fputs("Child process was terminated\n", ptr);
     fclose(ptr);
@@ -296,8 +296,36 @@ char **evaluateExpressions(char **inp_list, int n)
 void shell()
 {
     char **list;
+
+    /* Run pwd and read it */
+    FILE *pipe;
+    char buffer[1024];
+
+    // Run the pwd command and open a pipe to read its output
+    pipe = popen("pwd", "r");
+    
+    // Read the output of the pwd command
+    if (fgets(buffer, sizeof(buffer), pipe) != NULL) {
+        // Remove the trailing newline character, if any
+        if (buffer[strlen(buffer) - 1] == '\n') {
+            buffer[strlen(buffer) - 1] = '\0';
+        }
+    }
+    
+    // Close the pipe
+    pclose(pipe);
+
     while (1)
     {
+        printf("\033[0;31m"); // Make The print color red
+        printf("Mahmoud-Ahmed simple-shell:");
+
+        printf("\033[0;33m"); // Make The print color yellow
+        printf("%s", buffer);
+
+        printf("$ ");
+        printf("\033[0m"); // Make The print color white (Default)
+
         list = readInput();
 
         if ((int)strcmp(list[0], "exit") == 0)
@@ -307,6 +335,24 @@ void shell()
             executeShellBuiltin(list);
         else
             executeCommand(list);
+
+        // If user make cd, edit the printed path
+        if(!strcmp(list[0], "cd"))
+        {
+            // Run the pwd command and open a pipe to read its output
+            pipe = popen("pwd", "r");
+            
+            // Read the output of the pwd command
+            if (fgets(buffer, sizeof(buffer), pipe) != NULL) {
+                // Remove the trailing newline character, if any
+                if (buffer[strlen(buffer) - 1] == '\n') {
+                    buffer[strlen(buffer) - 1] = '\0';
+                }
+            }
+            
+            // Close the pipe
+            pclose(pipe);
+        }
     }
 }
 
@@ -317,7 +363,8 @@ void executeCommand(char **list)
     if (pid == 0)
     {
         execvp(list[0], list);
-        printf("Error\n");
+        if((int)strlen(list[0]) != 0)
+            printf("Error\n");
         exit(0);
     }
     else if (pid == -1)
