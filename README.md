@@ -2,8 +2,7 @@
 A shell that runs other programs and supports commands with or without arguments and commands executed in the background.
 
 ## Video 
-Youtube video running the shell explainnig shell features and them \
-`https://www.youtube.com/watch?v=N_EQhQhoYOU`
+[Youtube video running the shell explainnig shell features and them](https://www.youtube.com/watch?v=N_EQhQhoYOU)
 
 ## Test Cases
 <div align="center" >
